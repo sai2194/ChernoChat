@@ -38,6 +38,7 @@ public class Login extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} */
+		
 		setResizable(false);
 		setTitle("Login");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
