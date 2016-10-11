@@ -14,19 +14,21 @@ import javax.swing.JLabel;
 import java.awt.Font;
 
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Login extends JFrame {
 
 	
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField textField;
+	private JTextField txtName;
 	private JTextField txtAddress;
 	private JLabel lblIpAddress;
 	private JLabel lblPort;
-	private JTextField textField_1;
-	private JLabel lbleg;
-	private JLabel lbleg_1;
+	private JTextField txtPort;
+	private JLabel lblAddressDesc;
+	private JLabel lblPortDesc;
    
 	/*Create the frame.*/
 	 
@@ -49,10 +51,10 @@ public class Login extends JFrame {
 		contentPane.setLayout(null);
 		setContentPane(contentPane);
 		
-		textField = new JTextField();
-		textField.setBounds(55, 68, 165, 28);
-		contentPane.add(textField);
-		textField.setColumns(10);
+		txtName = new JTextField();
+		txtName.setBounds(55, 68, 165, 28);
+		contentPane.add(txtName);
+		txtName.setColumns(10);
 		
 		JLabel lblName = new JLabel("Name");
 		lblName.setFont(new Font("Tahoma", Font.BOLD, 13));
@@ -74,28 +76,46 @@ public class Login extends JFrame {
 		lblPort.setBounds(110, 195, 86, 20);
 		contentPane.add(lblPort);
 		
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
-		textField_1.setBounds(55, 226, 165, 28);
-		contentPane.add(textField_1);
+		txtPort = new JTextField();
+		txtPort.setColumns(10);
+		txtPort.setBounds(55, 226, 165, 28);
+		contentPane.add(txtPort);
 		
-		lbleg = new JLabel("(e.g. 172.16.64.159 )");
-		lbleg.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lbleg.setBounds(75, 166, 131, 20);
-		contentPane.add(lbleg);
+		lblAddressDesc = new JLabel("(e.g. 172.16.64.159 )");
+		lblAddressDesc.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblAddressDesc.setBounds(75, 166, 131, 20);
+		contentPane.add(lblAddressDesc);
 		
-		lbleg_1 = new JLabel("(e.g. 8192 )");
-		lbleg_1.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lbleg_1.setBounds(99, 254, 131, 20);
-		contentPane.add(lbleg_1);
+		lblPortDesc = new JLabel("(e.g. 8192 )");
+		lblPortDesc.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblPortDesc.setBounds(99, 254, 131, 20);
+		contentPane.add(lblPortDesc);
 		
 		JButton btnLogin = new JButton("Login");
+		btnLogin.addActionListener(new ActionListener() {
+			 public void actionPerformed(ActionEvent arg0) {
+				
+				String name = txtName.getText();
+				String address = txtAddress.getText();
+				int port = Integer.parseInt(txtPort.getText());
+				login(name,address,port);
+			}
+
+			
+		});
 		btnLogin.setBounds(85, 301, 89, 23);
 		contentPane.add(btnLogin);
 	}
 	
-	 /* Launch the application. */
+	/* Login Stuff here !!! */
+	private void login(String name,String address,int port) {
+		dispose();
+		System.out.println(name+" "+address+" "+port);
+		
+	}
 	
+	 /* Launch the application. */
+	   
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
