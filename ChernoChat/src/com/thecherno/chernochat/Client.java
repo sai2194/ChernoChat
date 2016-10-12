@@ -5,13 +5,23 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.DefaultCaret;
+
 import java.awt.GridBagLayout;
+
 import javax.swing.JTextArea;
+
 import java.awt.GridBagConstraints;
+
 import javax.swing.JButton;
+
 import java.awt.Insets;
+
 import javax.swing.JTextField;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
@@ -26,7 +36,8 @@ public class Client extends JFrame {
 	private String name,address;
 	private int port;
 	private JTextField txtMessage;
-	private JTextArea txtrHistory;
+	private JTextArea history;
+	private DefaultCaret caret;
 	
 	public Client(String name,String address,int port) {
 		
@@ -42,11 +53,11 @@ public class Client extends JFrame {
 	{
 		
 		/*try {
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-	} catch (Exception e) {
-		// TODO Auto-generated catch block
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+         } 
+		catch (Exception e) {
 		e.printStackTrace();
-	} */
+	     } */
 		
 		
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -63,17 +74,20 @@ public class Client extends JFrame {
 		gbl_contentPane.rowWeights = new double[]{1.0, Double.MIN_VALUE};
 		contentPane.setLayout(gbl_contentPane);
 		
-		txtrHistory = new JTextArea();
-		txtrHistory.setFont(new Font("Monospaced", Font.BOLD | Font.ITALIC, 13));
-		txtrHistory.setEditable(false);
-		GridBagConstraints gbc_txtrHistory = new GridBagConstraints();
-		gbc_txtrHistory.insets = new Insets(0, 0, 5, 5);
-		gbc_txtrHistory.fill = GridBagConstraints.BOTH;
-		gbc_txtrHistory.gridx = 1;
-		gbc_txtrHistory.gridy = 1;
-		gbc_txtrHistory.gridwidth = 2;
-		//gbc_txtrHistory.insets = new Insets(0,5,0,0);
-		contentPane.add(txtrHistory, gbc_txtrHistory);
+		history = new JTextArea();
+		history.setFont(new Font("Monospaced", Font.BOLD | Font.ITALIC, 13));
+		history.setEditable(false);
+		caret = (DefaultCaret)history.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE); 
+		JScrollPane scroll = new JScrollPane(history);
+		GridBagConstraints scrollconstraints = new GridBagConstraints();
+		scrollconstraints.insets = new Insets(0, 0, 5, 5);
+		scrollconstraints.fill = GridBagConstraints.BOTH;
+		scrollconstraints.gridx = 1;
+		scrollconstraints.gridy = 1;
+		scrollconstraints.gridwidth = 2;
+		//scrollconstraints.insets = new Insets(0,5,0,0);
+		contentPane.add(scroll, scrollconstraints);
 		
 		txtMessage = new JTextField();
 		txtMessage.addKeyListener(new KeyAdapter() {
@@ -119,6 +133,6 @@ public class Client extends JFrame {
 	}
     public void console(String message)
     {
-    	txtrHistory.append(message + "\n\r");
+    	history.append(message + "\n\r");
     }
 }
