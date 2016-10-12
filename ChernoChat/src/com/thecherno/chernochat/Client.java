@@ -83,9 +83,8 @@ public class Client extends JFrame {
 		gbc_btnSend.gridy = 2;
 		contentPane.add(btnSend, gbc_btnSend);
 		
-		requestFocus();
-		txtMessage.requestFocus();
 		setVisible(true);
+		txtMessage.requestFocusInWindow();
 	}
 
 }
