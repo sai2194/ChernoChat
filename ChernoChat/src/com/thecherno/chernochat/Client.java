@@ -27,6 +27,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.Font;
+import java.io.IOException;
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
@@ -65,7 +67,7 @@ public class Client extends JFrame {
 	private boolean openConnection(String address,int port)
 	{
 		try{
-			socket = new DatagramSocket();
+			socket = new DatagramSocket(port);
 		ip = InetAddress.getByName(address);
 		}
 		catch(UnknownHostException e){
@@ -77,6 +79,19 @@ public class Client extends JFrame {
 			return false;
 		}
 		return true;
+	}
+	
+	private String receive()
+	{
+		byte[] data = new byte[1024];
+		DatagramPacket packet = new DatagramPacket(data,data.length);
+		try{
+			socket.receive(packet);
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+		String message = new String(packet.getData());
+		return message;
 	}
 	
 	private void createWindow()
