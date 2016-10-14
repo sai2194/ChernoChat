@@ -92,7 +92,7 @@ public class Client extends JFrame {
 			e.printStackTrace();
 		}
 		String message = new String(packet.getData());
-		return message;
+		return message;  
 	}
 	
 	private void send(final byte[] data)
