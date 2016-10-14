@@ -2,9 +2,13 @@ package com.thecherno.chernochat.server;
 
 public class ServerMain {
 	
+	private int port;
+	Server server;
 	
-	public ServerMain(int port)
-	{
+	public ServerMain(int port){
+		
+		this.port = port;
+		server = new Server(port);
 		
 	}
  
