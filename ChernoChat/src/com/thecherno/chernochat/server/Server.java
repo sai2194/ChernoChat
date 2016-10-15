@@ -74,7 +74,10 @@ public class Server implements Runnable{
 		
 		String string = new String(packet.getData());
 		if(string.startsWith("/c/")){
-			clients.add(new ServerClient(string.substring(3, string.length()),packet.getAddress(),packet.getPort(),50));
+			
+			int id = UniqueIdentifier.getIdentifier();
+			System.out.println(id);
+			clients.add(new ServerClient(string.substring(3, string.length()),packet.getAddress(),packet.getPort(),id));
 			System.out.println(string.substring(3, string.length()));
 		}
 		else{
