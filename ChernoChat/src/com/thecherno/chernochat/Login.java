@@ -26,6 +26,7 @@ public class Login extends JFrame {
 	private JTextField txtAddress;
 	private JLabel lblIpAddress;
 	private JLabel lblPort;
+	
 	private JTextField txtPort;
 	private JLabel lblAddressDesc;
 	private JLabel lblPortDesc;
