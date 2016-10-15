@@ -64,7 +64,7 @@ public class Client extends JFrame {
 		}
 		createWindow();
 		console("Successfully Connected!!");
-		String connection = name + " connected from address "+address+" : "+port;
+		String connection = "/c/" + name;
 		send(connection.getBytes());
 	}
 	private boolean openConnection(String address)
