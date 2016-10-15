@@ -56,7 +56,7 @@ public class Client extends JFrame {
 		this.name = name;
 		this.address = address;
 		this.port = port;
-		boolean connect = openConnection(address,port);
+		boolean connect = openConnection(address);
 		if(!connect)
 		{
 			System.err.println("Connection Failed !!!");
@@ -64,11 +64,13 @@ public class Client extends JFrame {
 		}
 		createWindow();
 		console("Successfully Connected!!");
+		String connection = name + " connected from address "+address+" : "+port;
+		send(connection.getBytes());
 	}
-	private boolean openConnection(String address,int port)
+	private boolean openConnection(String address)
 	{
 		try{
-			socket = new DatagramSocket(port);
+			socket = new DatagramSocket();
 		ip = InetAddress.getByName(address);
 		}
 		catch(UnknownHostException e){
@@ -192,6 +194,7 @@ public class Client extends JFrame {
 		if(message.equals(""))return;
 		message = name + " : " + message;
 		console(message);
+		send(message.getBytes()); // sends the server the message
 		txtMessage.setText("");
 	}
     public void console(String message)
