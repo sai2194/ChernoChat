@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
 
 public class Server implements Runnable{
@@ -70,6 +71,31 @@ public class Server implements Runnable{
 		};
 		receive.start();
 	}
+	
+	private void sendToAll(String message){
+		
+		for(int i=0;i<clients.size();i++){
+			
+			ServerClient client = clients.get(i);
+			send(message.getBytes(),client.address,client.port); // sends the message to all the clients
+		}
+	}
+	
+	private void send(final byte[] data,final InetAddress address,final int port){
+		
+		send = new Thread("Send"){
+			public void run(){
+				DatagramPacket packet = new DatagramPacket(data,data.length,address,port);
+				try {
+					socket.send(packet);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		send.start();
+	}
+	
 	private void process(DatagramPacket packet){
 		
 		String string = new String(packet.getData());
@@ -80,8 +106,12 @@ public class Server implements Runnable{
 			clients.add(new ServerClient(string.substring(3, string.length()),packet.getAddress(),packet.getPort(),id));
 			System.out.println(string.substring(3, string.length()));
 		}
+		else if(string.startsWith("/m/")){
+		
+			sendToAll(string);
+		}
 		else{
-		System.out.println(string);
+			System.out.println(string);
 		}
 	}
 
