@@ -111,7 +111,7 @@ public class Login extends JFrame {
 	/* Login Stuff here !!! */
 	private void login(String name,String address,int port) {
 		dispose();
-		new Client(name,address,port);
+		new ClientWindow(name,address,port);
 		
 	}
 	
