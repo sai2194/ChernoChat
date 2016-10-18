@@ -44,6 +44,7 @@ public class Server implements Runnable{
 			public void run(){
 				while(running){
 					// managing
+					//System.out.println(clients.size());
 				}
 				
 			}
@@ -111,6 +112,7 @@ public class Server implements Runnable{
 			System.out.println("Identifier : "+id);
 			clients.add(new ServerClient(string.substring(3, string.length()),packet.getAddress(),packet.getPort(),id));
 			System.out.println(string.substring(3, string.length()));
+			//System.out.println(string.length());
 			String ID = "/c/"+id;
 			send(ID,packet.getAddress(),packet.getPort());
 		}
@@ -129,13 +131,24 @@ public class Server implements Runnable{
 	
 	private void disconnect(int id,boolean status){
 		
+		ServerClient c = null;
 		for(int i=0;i<clients.size();i++){
 			if(clients.get(i).getID() == id){
+				c = clients.get(i);
 				clients.remove(i);
 				break;
 			}
 			
 		}
+		String message = "";
+		if(status){ // i.e., if user has done this 
+			message = "Client " + c.name.trim() + " (" + c.getID() + ") @ " + c.address.toString() + ":" + c.port +" disconnected !";
+		}
+		else{
+			message = "Client " + c.name.toString() + " (" + c.getID() + ") @ " + c.address.toString() + ":" + c.port +" timed out !";
+		}
+		System.out.println(message);
 	}
+	
 
 }

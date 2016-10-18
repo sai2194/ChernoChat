@@ -104,7 +104,7 @@ public class ClientWindow extends JFrame implements Runnable{
 		public void keyPressed(KeyEvent e) {
 			if(e.getKeyCode() == KeyEvent.VK_ENTER)
 			{
-				send(txtMessage.getText());
+				send(txtMessage.getText(),true);
 			}
 		}
 	});
@@ -121,7 +121,7 @@ public class ClientWindow extends JFrame implements Runnable{
 	JButton btnSend = new JButton("send");
 	btnSend.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-			send(txtMessage.getText());
+			send(txtMessage.getText(),true);
 		}
 	});
 	
@@ -135,7 +135,7 @@ public class ClientWindow extends JFrame implements Runnable{
 		public void windowClosing(WindowEvent e){
 			//System.out.println("closed !!!");
 			String disconnect = "/d/" + client.getID() + "/e/";
-			send(disconnect);
+			send(disconnect,false);
 			running = false;
 			client.close();
 		}
@@ -149,12 +149,13 @@ public class ClientWindow extends JFrame implements Runnable{
     	 listen();
      }
      
-    public void send(String message){
+    public void send(String message,boolean text){
     	
  		if(message.equals(""))return;
+ 		if(text){
  		message = client.getName() + " : " + message;
-
- 		message = "/m/" + message;
+        message = "/m/" + message;
+ 		}
  		client.send(message.getBytes()); // sends the server the message
  		txtMessage.setText("");
  	}
