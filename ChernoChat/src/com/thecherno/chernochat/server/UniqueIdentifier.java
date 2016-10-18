@@ -15,7 +15,7 @@ public class UniqueIdentifier {
 	 for(int i=0;i<RANGE;i++){
 		 ids.add(i);
 	 }
-	 Collections.shuffle(ids);
+	 Collections.shuffle(ids); 
 	}
 	private UniqueIdentifier(){
 		
