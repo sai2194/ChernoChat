@@ -10,7 +10,7 @@ import java.net.SocketException;
 
 public class Server implements Runnable{
 	
-	private List<ServerClient> clients = new ArrayList<ServerClient>();
+	private List<ServerClient> clients = new ArrayList<ServerClient>();  // list of connected clients
 	private int port;
 	private DatagramSocket socket;
 	private Thread run,manage,receive,send;
@@ -63,8 +63,8 @@ public class Server implements Runnable{
 						e.printStackTrace();
 					}
 					process(packet);
-					clients.add(new ServerClient("Hari",packet.getAddress(),packet.getPort(),50));
-					System.out.println(clients.get(0).address.toString()+" : "+clients.get(0).port);
+					//clients.add(new ServerClient("Hari",packet.getAddress(),packet.getPort(),50));
+					//System.out.println(clients.get(0).address.toString()+" : "+clients.get(0).port);
 					
 				}
 			}
@@ -96,22 +96,45 @@ public class Server implements Runnable{
 		send.start();
 	}
 	
+	private void send(String message,InetAddress address,int port){
+		
+		message+="/e/";  // end of the message erases the spaces(if any) after completion of message
+		send(message.getBytes(),address,port);
+	}
+	
 	private void process(DatagramPacket packet){
 		
 		String string = new String(packet.getData());
 		if(string.startsWith("/c/")){
 			
 			int id = UniqueIdentifier.getIdentifier();
-			System.out.println(id);
+			System.out.println("Identifier : "+id);
 			clients.add(new ServerClient(string.substring(3, string.length()),packet.getAddress(),packet.getPort(),id));
 			System.out.println(string.substring(3, string.length()));
+			String ID = "/c/"+id;
+			send(ID,packet.getAddress(),packet.getPort());
 		}
 		else if(string.startsWith("/m/")){
 		
 			sendToAll(string);
 		}
+		else if(string.startsWith("/d/")){
+			String id = string.split("/d/|/e/")[1];
+			disconnect(Integer.parseInt(id),true);
+		}
 		else{
 			System.out.println(string);
+		}
+	}
+	
+	private void disconnect(int id,boolean status){
+		
+		for(int i=0;i<clients.size();i++){
+			if(clients.get(i).getID() == id){
+				clients.remove(i);
+				break;
+			}
+			
 		}
 	}
 

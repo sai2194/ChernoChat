@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -18,7 +20,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultCaret;
 
-public class ClientWindow extends JFrame{
+public class ClientWindow extends JFrame implements Runnable{
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -26,10 +28,15 @@ public class ClientWindow extends JFrame{
 	private JTextArea history;
 	private JPanel contentPane;
 	private DefaultCaret caret;
+	private Thread listen,run;
+	
+	private boolean running = false;
 	
 	private Client client;
+	
+	
 
-      public ClientWindow(String name,String address,int port) {
+     public ClientWindow(String name,String address,int port) {
 	
 		setTitle("Cherno Chat Client");
 		client = new Client(name,address,port);
@@ -44,6 +51,11 @@ public class ClientWindow extends JFrame{
 		console("Successfully Connected!!");
 		String connection = "/c/" + name;
 		client.send(connection.getBytes());
+		
+		running = true;
+		run = new Thread(this,"Running");
+		run.start();
+		
 	   }
 
      private void createWindow()
@@ -119,22 +131,60 @@ public class ClientWindow extends JFrame{
 	gbc_btnSend.gridy = 2;
 	contentPane.add(btnSend, gbc_btnSend);
 	
+	addWindowListener(new WindowAdapter(){
+		public void windowClosing(WindowEvent e){
+			//System.out.println("closed !!!");
+			String disconnect = "/d/" + client.getID() + "/e/";
+			send(disconnect);
+			running = false;
+			client.close();
+		}
+	});
+	
 	setVisible(true);
 	txtMessage.requestFocusInWindow();
     }
+     
+     public void run(){
+    	 listen();
+     }
      
     public void send(String message){
     	
  		if(message.equals(""))return;
  		message = client.getName() + " : " + message;
- 		console(message);
+
  		message = "/m/" + message;
  		client.send(message.getBytes()); // sends the server the message
  		txtMessage.setText("");
  	}
-     public void console(String message){
+    
+    public void listen(){
+    	
+    	listen = new Thread("Listen"){
+    	  public void run(){
+    		while(running){
+    	          String message =  client.receive();
+    	          if(message.startsWith("/c/")){
+    	        	  
+    	        	  client.setID(Integer.parseInt(message.split("/c/|/e/")[1]));  //  "/c/85468/e/       "
+    	        	  console("Successfully connnected to server ! ID : " + client.getID());
+    	          }else
+    	        	  if(message.startsWith("/m/")){
+    	        		  String text = message.split("/m/|/e/")[1];
+    	        		  console(text); 
+    	        	  }
+    	          
+    		  }
+    	  }
+    	};
+    	listen.start();
+    }
+    
+    public void console(String message){
     	 
      	history.append(message + "\n\r");
+     	history.setCaretPosition(history.getDocument().getLength());
      }
 
 }
