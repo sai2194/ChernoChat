@@ -11,10 +11,14 @@ import java.net.SocketException;
 public class Server implements Runnable{
 	
 	private List<ServerClient> clients = new ArrayList<ServerClient>();  // list of connected clients
+	private List<Integer> clientResponse = new ArrayList<Integer>();
+	
 	private int port;
 	private DatagramSocket socket;
 	private Thread run,manage,receive,send;
 	private boolean running =  false;
+	
+	private final int MAX_ATTEMPTS = 5;
 	
 	public Server(int port){    // constructor
 		
@@ -43,8 +47,28 @@ public class Server implements Runnable{
 		manage = new Thread("Manage"){
 			public void run(){
 				while(running){
-					// managing
-					//System.out.println(clients.size());
+					
+					sendToAll("/i/server"); // a kind of ping to all the clients
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					for(int i=0;i<clients.size();i++){
+						ServerClient c = clients.get(i);
+						if(!clientResponse.contains(c.getID())){
+							if(c.attempt >= MAX_ATTEMPTS){
+								disconnect(c.getID(),false); // unclean exit from user (so false)
+							}
+							else{
+								c.attempt++;
+							}
+						}
+						else{
+							c.attempt = 0;
+							clientResponse.remove(new Integer(c.getID())); // hover over remove method
+						}
+					}
 				}
 				
 			}
@@ -124,6 +148,10 @@ public class Server implements Runnable{
 			String id = string.split("/d/|/e/")[1];
 			disconnect(Integer.parseInt(id),true);
 		}
+		else if(string.startsWith("/i/")){
+		//	/i/8790/e/
+			clientResponse.add(Integer.parseInt(string.split("/i/|/e/")[1]));
+		}
 		else{
 			System.out.println(string);
 		}
@@ -145,7 +173,7 @@ public class Server implements Runnable{
 			message = "Client " + c.name.trim() + " (" + c.getID() + ") @ " + c.address.toString() + ":" + c.port +" disconnected !";
 		}
 		else{
-			message = "Client " + c.name.toString() + " (" + c.getID() + ") @ " + c.address.toString() + ":" + c.port +" timed out !";
+			message = "Client " + c.name.trim() + " (" + c.getID() + ") @ " + c.address.toString() + ":" + c.port +" timed out !";
 		}
 		System.out.println(message);
 	}
