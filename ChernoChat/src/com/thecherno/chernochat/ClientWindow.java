@@ -172,7 +172,8 @@ public class ClientWindow extends JFrame implements Runnable{
     	        	  console("Successfully connnected to server ! ID : " + client.getID());
     	          }else
     	        	  if(message.startsWith("/m/")){
-    	        		  String text = message.split("/m/|/e/")[1];
+    	        		  String text = message.substring(3);
+    	        		  text = text.split("/e/")[0];
     	        		  console(text); 
     	        	  }
     	          
