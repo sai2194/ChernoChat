@@ -109,6 +109,7 @@ public class Server implements Runnable{
 				while(running){
 					
 					sendToAll("/i/server"); // a kind of ping to all the clients
+					sendStatus();
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
@@ -134,6 +135,18 @@ public class Server implements Runnable{
 			}
 		};
 		manage.start();
+	}
+	
+	private void sendStatus(){
+		
+		if(clients.size() <= 0) return;
+		String users = "/u/";
+		for(int i=0;i < clients.size()-1;i++){
+			
+			users+= clients.get(i).name + "/n/";
+		}
+		users+= clients.get(clients.size()-1).name + "/e/";
+		sendToAll(users);
 	}
 	
 	private void receive(){

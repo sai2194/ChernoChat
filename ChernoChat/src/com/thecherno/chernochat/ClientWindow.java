@@ -1,5 +1,6 @@
 package com.thecherno.chernochat;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -10,6 +11,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Arrays;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -19,6 +21,9 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultCaret;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 public class ClientWindow extends JFrame implements Runnable{
 	
@@ -33,14 +38,20 @@ public class ClientWindow extends JFrame implements Runnable{
 	private boolean running = false;
 	
 	private Client client;
+	private JMenuBar File;
+	private JMenuBar menuBar;
+	private JMenu mnFile;
+	private JMenuItem mntmOnlineUsers;
+	private JMenuItem mntmExit;
 	
-	
+	private OnlineUsers users;
 
      public ClientWindow(String name,String address,int port) {
 	
 		setTitle("Cherno Chat Client");
 		client = new Client(name,address,port);
-		
+		//setBackground(Color.PINK);
+		//setForeground(Color.PINK);
 		boolean connect = client.openConnection(address);
 		if(!connect)
 		{
@@ -51,7 +62,7 @@ public class ClientWindow extends JFrame implements Runnable{
 		console("Successfully Connected!!");
 		String connection = "/c/" + name + "/e/";
 		client.send(connection.getBytes());
-		
+		users = new OnlineUsers();
 		running = true;
 		run = new Thread(this,"Running");
 		run.start();
@@ -72,15 +83,31 @@ public class ClientWindow extends JFrame implements Runnable{
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	setSize(880,550);
 	setLocationRelativeTo(null);
+	
+	File = new JMenuBar();
+	setJMenuBar(File);
+	
+	mnFile = new JMenu("File");
+	File.add(mnFile);
+	
+	mntmOnlineUsers = new JMenuItem("Online Users");
+	mntmOnlineUsers.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			users.setVisible(true);
+		}
+	});
+	mnFile.add(mntmOnlineUsers);
+	
+	mntmExit = new JMenuItem("Exit");
+	mnFile.add(mntmExit);
+	
 	contentPane = new JPanel();
 	contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 	setContentPane(contentPane);
 	
 	GridBagLayout gbl_contentPane = new GridBagLayout();
-	gbl_contentPane.columnWidths = new int[]{35,812,30,3}; //sum = 880
-	gbl_contentPane.rowHeights = new int[]{60,450,45};  // sum = 550
-	gbl_contentPane.columnWeights = new double[]{1.0, 1.0};
-	gbl_contentPane.rowWeights = new double[]{1.0, Double.MIN_VALUE};
+	gbl_contentPane.columnWidths = new int[]{28,815,30,7}; //sum = 880
+	gbl_contentPane.rowHeights = new int[]{35,485,40};  // sum = 550
 	contentPane.setLayout(gbl_contentPane);
 	
 	history = new JTextArea();
@@ -94,9 +121,11 @@ public class ClientWindow extends JFrame implements Runnable{
 	scrollconstraints.fill = GridBagConstraints.BOTH;
 	scrollconstraints.gridx = 0;
 	scrollconstraints.gridy = 0;
+	scrollconstraints.weightx = 1;
+	scrollconstraints.weighty = 1;
 	scrollconstraints.gridwidth = 3;
 	scrollconstraints.gridheight = 2;
-	//scrollconstraints.insets = new Insets(0,5,0,0);
+	scrollconstraints.insets = new Insets(0,5,0,0);
 	contentPane.add(scroll, scrollconstraints);
 	
 	txtMessage = new JTextField();
@@ -114,6 +143,8 @@ public class ClientWindow extends JFrame implements Runnable{
 	gbc_txtMessage.fill = GridBagConstraints.HORIZONTAL;
 	gbc_txtMessage.gridx = 0;
 	gbc_txtMessage.gridy = 2;
+	gbc_txtMessage.weightx = 1;
+	gbc_txtMessage.weighty = 0; // default is 0
 	gbc_txtMessage.gridwidth = 2;
 	contentPane.add(txtMessage, gbc_txtMessage);
 	txtMessage.setColumns(10);
@@ -129,6 +160,8 @@ public class ClientWindow extends JFrame implements Runnable{
 	gbc_btnSend.insets = new Insets(0, 0, 0, 5);
 	gbc_btnSend.gridx = 2;
 	gbc_btnSend.gridy = 2;
+	gbc_btnSend.weightx = 0;
+	gbc_btnSend.weighty = 0;
 	contentPane.add(btnSend, gbc_btnSend);
 	
 	addWindowListener(new WindowAdapter(){
@@ -178,6 +211,9 @@ public class ClientWindow extends JFrame implements Runnable{
     	          }else if(message.startsWith("/i/")){
     	        	      String text = "/i/" + client.getID() + "/e/";
     	        	      send(text,false);
+    	          }else if(message.startsWith("/u/")){  // server sends the clients list of names whoz online
+    	        	  String[] u = message.split("/u/|/n/|/e/");
+    	        	  users.update(Arrays.copyOfRange(u, 1, u.length-1)); // will trim the array
     	          }
     	          
     		  }
