@@ -110,7 +110,7 @@ public class Server implements Runnable{
     	}
     	else{     // unknown command
     		System.out.println("Unknown Command!");
-    		printHelp();
+    		printHelp(); 
     	}
     		
     }

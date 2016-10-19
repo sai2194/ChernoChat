@@ -87,7 +87,7 @@ public class ClientWindow extends JFrame implements Runnable{
 	setSize(880,550);
 	setLocationRelativeTo(null);
 	
-	File = new JMenuBar();
+	File = new JMenuBar(); 
 	setJMenuBar(File);
 	
 	
