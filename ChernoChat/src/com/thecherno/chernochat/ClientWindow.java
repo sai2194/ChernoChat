@@ -24,6 +24,7 @@ import javax.swing.text.DefaultCaret;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import java.awt.Button;
 
 public class ClientWindow extends JFrame implements Runnable{
 	
@@ -45,6 +46,8 @@ public class ClientWindow extends JFrame implements Runnable{
 	private JMenuItem mntmExit;
 	
 	private OnlineUsers users;
+	private JButton btnOnline;
+	private Button button;
 
      public ClientWindow(String name,String address,int port) {
 	
@@ -87,19 +90,18 @@ public class ClientWindow extends JFrame implements Runnable{
 	File = new JMenuBar();
 	setJMenuBar(File);
 	
-	mnFile = new JMenu("File");
-	File.add(mnFile);
 	
-	mntmOnlineUsers = new JMenuItem("Online Users");
-	mntmOnlineUsers.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
+	btnOnline = new JButton("Online Users");
+	btnOnline.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent arg0) {
 			users.setVisible(true);
 		}
 	});
-	mnFile.add(mntmOnlineUsers);
+	File.add(btnOnline);
 	
-	mntmExit = new JMenuItem("Exit");
-	mnFile.add(mntmExit);
+	
+	//mntmExit = new JMenuItem("Exit");
+	//mnFile.add(mntmExit);
 	
 	contentPane = new JPanel();
 	contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

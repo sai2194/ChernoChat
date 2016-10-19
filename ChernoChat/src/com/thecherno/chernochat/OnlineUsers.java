@@ -49,7 +49,7 @@ public class OnlineUsers extends JFrame {
 		JScrollPane p = new JScrollPane();
 		p.setViewportView(list);
 		contentPane.add(p, gbc_list);
-		list.setFont(new Font("Verdana", Font.BOLD | Font.ITALIC, 12));
+		list.setFont(new Font("Verdana", Font.BOLD, 12));
 	}
 	
 	public void update(String[] users){

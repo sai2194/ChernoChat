@@ -54,6 +54,8 @@ public class Server implements Runnable{
     	}
     	text = text.substring(1);
     	if(text.equals("raw")){
+    		if(raw) System.out.println("Raw mode is disabled!");
+    		else System.out.println("Raw mode is enabled!");
     		raw = !raw;  // we will get to see all kind of stuff.
     	}
     	else if(text.equals("clients")){
@@ -100,8 +102,30 @@ public class Server implements Runnable{
     			}
     		}
     	}
+    	else if(text.equals("quit")){   // for quiting the server
+    		quit();
+    	}
+    	else if(text.equals("help")){   
+    		printHelp();
+    	}
+    	else{     // unknown command
+    		System.out.println("Unknown Command!");
+    		printHelp();
+    	}
+    		
     }
+    scan.close();
   }
+	private void printHelp(){
+		
+		System.out.println("Here is the list of available commmands");
+		System.out.println("=======================================");
+		System.out.println("/raw - enable/disable raw mode");
+		System.out.println("/clients - shows online users");
+		System.out.println("/kick [userID or username] - kicks a user");
+		System.out.println("/help - shows this help message");
+		System.out.println("/quit - shuts down the server");
+	}
 	
 	private void manageClients(){
 		manage = new Thread("Manage"){
@@ -157,7 +181,10 @@ public class Server implements Runnable{
 					DatagramPacket packet = new DatagramPacket(data,data.length);
 					try {
 						socket.receive(packet);
-					} catch (IOException e) {
+					}catch(SocketException e){
+						
+					}
+					catch (IOException e) {
 						e.printStackTrace();
 					}
 					process(packet);
@@ -237,6 +264,15 @@ public class Server implements Runnable{
 		else{
 			System.out.println(string);
 		}
+	}
+	
+	private void quit(){
+		
+		for(int i=0;i<clients.size();i++){
+			disconnect(clients.get(i).getID(),true);
+		}
+		running = false;
+		socket.close();
 	}
 	
 	private void disconnect(int id,boolean status){
