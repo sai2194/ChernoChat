@@ -67,6 +67,39 @@ public class Server implements Runnable{
     		}
     		System.out.println("============");
     	}
+    	else if(text.startsWith("kick")){
+    		
+    		String victim = text.split(" ")[1];
+    		int victim_id = -1;
+    		boolean number = true;
+    		try{
+    			victim_id = Integer.parseInt(victim);
+    		}catch(NumberFormatException e){
+    			number = false;
+    		}
+    		if(number){
+    			boolean victim_exists = false;
+    			for(int i=0;i<clients.size();i++){
+    				if( victim_id == clients.get(i).getID()){
+    					victim_exists = true;
+    					break;
+    				}
+    			}
+    			if(victim_exists) disconnect(victim_id,true);
+    			else System.out.println("Client "+ victim_id + " doesnot exist!");
+    		}
+    		else{
+    			
+    			for(int i=0;i<clients.size();i++)
+    			{
+    				ServerClient c = clients.get(i);
+    				if(victim.equals(c.name)){
+    					disconnect(c.getID(),true);
+    					break;
+    				}
+    			}
+    		}
+    	}
     }
   }
 	
@@ -169,10 +202,10 @@ public class Server implements Runnable{
 		if(string.startsWith("/c/")){
 			
 			int id = UniqueIdentifier.getIdentifier();
-			System.out.println("Identifier : "+id);
-			clients.add(new ServerClient(string.substring(3, string.length()),packet.getAddress(),packet.getPort(),id));
-			System.out.println(string.substring(3, string.length()));
-			//System.out.println(string.length());
+			String name = string.split("/c/|/e/")[1];
+			System.out.println(name + " (" + id + ") connected !");
+			clients.add(new ServerClient(name,packet.getAddress(),packet.getPort(),id));
+			
 			String ID = "/c/"+id;
 			send(ID,packet.getAddress(),packet.getPort());
 		}
@@ -196,14 +229,18 @@ public class Server implements Runnable{
 	private void disconnect(int id,boolean status){
 		
 		ServerClient c = null;
+		boolean existed = false;
 		for(int i=0;i<clients.size();i++){
 			if(clients.get(i).getID() == id){
 				c = clients.get(i);
 				clients.remove(i);
+				existed = true;
 				break;
 			}
 			
 		}
+		if(!existed)
+			return;
 		String message = "";
 		if(status){ // i.e., if user has done this 
 			message = "Client " + c.name.trim() + " (" + c.getID() + ") @ " + c.address.toString() + ":" + c.port +" disconnected !";

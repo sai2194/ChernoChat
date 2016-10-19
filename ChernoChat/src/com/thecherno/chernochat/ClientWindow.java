@@ -49,7 +49,7 @@ public class ClientWindow extends JFrame implements Runnable{
 		}
 		createWindow();
 		console("Successfully Connected!!");
-		String connection = "/c/" + name;
+		String connection = "/c/" + name + "/e/";
 		client.send(connection.getBytes());
 		
 		running = true;
@@ -155,9 +155,10 @@ public class ClientWindow extends JFrame implements Runnable{
  		if(text){
  		message = client.getName() + " : " + message;
         message = "/m/" + message;
+        txtMessage.setText("");
  		}
  		client.send(message.getBytes()); // sends the server the message
- 		txtMessage.setText("");
+ 		
  	}
     
     public void listen(){
