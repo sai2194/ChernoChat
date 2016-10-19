@@ -3,6 +3,7 @@ package com.thecherno.chernochat.server;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -17,6 +18,8 @@ public class Server implements Runnable{
 	private DatagramSocket socket;
 	private Thread run,manage,receive,send;
 	private boolean running =  false;
+	
+	private boolean raw = false;
 	
 	private final int MAX_ATTEMPTS = 5;
 	
@@ -41,7 +44,31 @@ public class Server implements Runnable{
 	//System.out.println("harish");
     manageClients();
     receive();
-	}
+    Scanner scan = new Scanner(System.in);
+    while(running){
+    	String text = scan.nextLine();  // grabs enter line entered by user
+    	if(!text.startsWith("/")){
+    		sendToAll("/m/Server :" + text + "/e/");
+    		continue; 
+ 
+    	}
+    	text = text.substring(1);
+    	if(text.equals("raw")){
+    		raw = !raw;  // we will get to see all kind of stuff.
+    	}
+    	else if(text.equals("clients")){
+    
+    		System.out.println("Online Users :");
+    		System.out.println("============");
+    		for(int i=0;i<clients.size();i++){
+    			
+    			ServerClient c = clients.get(i);
+    			System.out.println(c.name + "(" + c.getID() + "): " + c.address.toString() + ":" + c.port);
+    		}
+    		System.out.println("============");
+    	}
+    }
+  }
 	
 	private void manageClients(){
 		manage = new Thread("Manage"){
@@ -50,7 +77,7 @@ public class Server implements Runnable{
 					
 					sendToAll("/i/server"); // a kind of ping to all the clients
 					try {
-						Thread.sleep(2000);
+						Thread.sleep(1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -99,6 +126,12 @@ public class Server implements Runnable{
 	
 	private void sendToAll(String message){
 		
+		if(message.startsWith("/m/")){
+		 String text = message.substring(3);
+		 text = text.split("/e/")[0];
+		 System.out.println(text);
+		}
+		
 		for(int i=0;i<clients.size();i++){
 			
 			ServerClient client = clients.get(i);
@@ -130,6 +163,9 @@ public class Server implements Runnable{
 	private void process(DatagramPacket packet){
 		
 		String string = new String(packet.getData());
+		if(raw){
+			System.out.println(string);
+		}
 		if(string.startsWith("/c/")){
 			
 			int id = UniqueIdentifier.getIdentifier();
